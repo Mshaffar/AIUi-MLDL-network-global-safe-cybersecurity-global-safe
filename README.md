@@ -1,2 +1,2 @@
-# AIUi-MLDL-network-global-safe-gcybersecurity-global-safe
+# AIUi-MLDL-network-global-safe-cybersecurity-global-safe
 AIUI/MLDL
