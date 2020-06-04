@@ -1,0 +1,363 @@
+Kotlin 1.4-M2 Released
+Posted on June 4, 2020 by Ekaterina Volodko
+Time flies, and today we want to present a few more powerful features of Kotlin 1.4 for your preview. Learn what Kotlin 1.4-M2 has in store, try it, and enjoy its features before they are officially released in Kotlin 1.4.
+
+kotlin-1.4-M2
+
+We thank all of you who tried our first preview of Kotlin 1.4, shared your feedback, and helped make Kotlin better!
+
+Also many thanks to those who have already tried Kotlin 1.4-M2’s standard library improvements announced in our previous post.
+
+In this post, we’ll highlight the new features and key improvements available in 1.4-M2:
+
+Support for sharing code in several targets thanks to the hierarchical structure in multiplatform projects.
+A new flexible Kotlin Project Wizard for easy creation and configuration of different types of projects.
+A new compiler mode for library authors called explicit API mode that helps create consistent and well-described APIs.
+Kotlin/Native support for using suspending functions from Swift and Objective-C.
+Kotlin/JS’ refined Gradle DSL, CSS support out of the box, and a common export annotation.
+You can find the complete list of changes in the change log. As always, we’re really grateful to our external contributors.
+
+We would appreciate it very much if you could try the preview and share your feedback.
+
+
+Sharing code in several targets with the hierarchical project structure
+With the new hierarchical project structure support, you can share code among several targets in a multiplatform project.
+
+Previously, any code added to a multiplatform project could be placed either in a platform-specific source set, which is limited to one target and can’t be reused by any other platform, or in a common source set, like commonMain or commonTest, which is shared across all the platforms in the project. In the common source set, you could only call a platform-specific API by using an expect declaration that needs platform-specific actual implementations.
+
+This made it easy to share code between all targets, but it was not so easy to share between only some of the targets, especially similar ones that could potentially reuse a lot of the common logic and third-party APIs.
+
+For example, in a typical multiplatform project targeting iOS, there are two iOS-related targets: one for iOS ARM64 devices, and the other for the x64 simulator. They have separate platform-specific source sets, but in practice, there is rarely a need for different code for the device and simulator, and their dependencies are much alike. So iOS-specific code could be shared between them.
+
+Apparently, in this setup, it would be desirable to have a shared source set for two iOS targets, with Kotlin/Native code that could still directly call any of the APIs that are common to both the iOS device and the simulator.
+
+ios-source-sets
+
+Now you can do this with the hierarchical project structure support, which infers and adapts the API and language features available in each source set based on which targets consume them.
+
+How to use
+Install the 1.4 M2 Kotlin plugin with the hierarchical project support right now!
+
+Add the following flag to your project’s gradle.properties file:
+
+kotlin.mpp.enableGranularSourceSetsMetadata=true
+Note that the hierarchical structure as well as all multiplatform projects require Gradle 6.0 or later starting with Kotlin 1.4-M2.
+
+You can create a hierarchical structure with target shortcuts available for typical multi-target scenarios or manually by connecting the source sets.
+
+For example, create the two iOS targets and the shared source set shown above with the ios() shortcut:
+
+kotlin {
+   ios() // iOS device and simulator targets; iosMain and iosTest source sets
+}
+For other combinations of targets, create a hierarchy manually by connecting the source sets with the dependsOn relation.
+
+desktopMain-hierarchy
+
+kotlin {
+​
+   linuxX64()
+   mingwX64()
+   macosX64()
+​
+   sourceSets {
+       ...
+​
+       val desktopMain by creating {
+           dependsOn(commonMain)
+       }
+​
+       val linuxX64Main by getting {
+           dependsOn(desktopMain)
+       }
+​
+       val mingwX64Main by getting {
+           dependsOn(desktopMain)
+       }
+​
+       val macosX64Main by getting {
+           dependsOn(desktopMain)
+       }
+   }
+}
+You can have a shared source set for the following combinations of targets:
+
+JVM + JS + Native
+JVM + Native
+JS + Native
+JVM + JS
+Native
+At the moment, we don’t support sharing a source set for these combinations:
+
+Several JVM targets
+JVM + Android targets
+Several JS targets
+Please feel free to share your target combinations by emailing us as feedback@kotlinlang.org. It would help us prioritize more commonly used combinations over others.
+
+Sharing code in libraries
+Thanks to the hierarchical project structure, libraries can also provide common APIs for a subset of targets.
+
+When a library is published, the API of its shared source sets is embedded into the library artifacts along with information about the project structure. When you use this library, the shared source sets of your project access precisely those APIs of the library that are available to the targets of each source set.
+
+For example, check out the following source set hierarchy in the native-mt branch of the kotlinx.coroutines repository:
+
+coroutines-hierarchy
+
+The concurrent source set declares the function runBlocking and is compiled for the JVM and the native targets. You can depend on it and call runBlocking() from a source set that is shared between a JVM target and native targets, as it would match the “targets signature” of the library’s concurrent source set.
+
+Specifying dependencies only once
+From now on, instead of specifying dependencies on different variants of the same library in shared and platform-specific source sets where it is used, you should specify a dependency only once in the shared source set.
+
+kotlin {
+  sourceSets {
+      val desktopMain by creating {
+          dependencies {
+               implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.7-1.4-M2")
+          }
+      }
+  }
+}
+Don’t use kotlinx library artifact names with suffixes specifying the platform, such as -common, -native, or similar, as they are NOT supported anymore. Instead, use the library base artifact name, which in the example above is kotlinx-coroutines-core. However, the change doesn’t currently affect the stdlib and kotlin.test libraries (stdlib-common and test-common); they will be addressed later.
+
+If you need a dependency only for a specific platform, you can still use platform-specific variants of standard and kotlinx libraries with such suffixes as -jvm or-js, for example kotlinx-coroutines-core-jvm.
+
+Leveraging native libs in the hierarchical structure
+You can use platform-dependent libraries, such as Foundation, UIKit, and posix, in source sets shared among several native targets. This can help you share more native code without being limited by platform-specific dependencies.
+
+No additional steps are required – everything is done automatically. IntelliJ IDEA will help you detect common declarations that you can use in the shared code.
+
+However, note that there are a few limitations:
+
+This approach works only for a native source set that is shared among platform-specific source sets. It doesn’t work for native source sets shared at higher levels of the source set hierarchy.
+For example, if you have nativeDarwinMain that is a parent of watchosMain and iosMain, where iosMain has two children – iosArm64Main and iosX64Main, you can use platform-dependent libraries only for iosMain but not for nativeDarwinMain.
+The approach works only for interop libraries shipped with Kotlin/Native.
+Learn more about the technical details.
+
+How to use
+To enable usage of platform-dependent libraries in shared source sets, add the following to your gradle.properties:
+
+kotlin.mpp.enableGranularSourceSetsMetadata=true
+kotlin.native.enableDependencyPropagation=false
+Share feedback about the hierarchical structure
+Note that the hierarchical project structure is in technological preview right now and still under development. You can check the known issues that we are going to fix, some of which have workarounds.
+
+Feel free to ask for help in the #multiplatform channel of the Kotlin Slack, and report bugs to our issue tracker YouTrack. This is a complex and significant feature, so your feedback will be especially useful!
+
+Gradle 6.0 or newer required in multiplatform projects
+Starting with Kotlin 1.4-M2, all multiplatform projects require Gradle 6.0 or later. Please make sure to upgrade Gradle for your projects that use the kotlin-multiplatform plugin.
+
+A new flexible Project Wizard
+With the new flexible Kotlin Project Wizard, you have a single place where you can easily create and configure Kotlin projects of different types, including multiplatform projects, which are rather difficult to configure without a UI.
+
+project-wizard-1
+
+Previously, you could create Kotlin projects from different places that provided different configuration options. Now there’s a single place to do this, which provides simplicity combined with flexibility:
+
+Select the project template, depending on what you’re trying to do.
+Select the build system — Gradle (Kotlin or Groovy DSL), Maven, or IntelliJ. The Wizard shows only build systems supported for the selected project template.
+Preview the project structure right on the main screen.
+Then you can finish creating your project or, optionally, configure the project on the next screen:
+
+Add/remove modules and targets supported for this project template.
+Configure module and target settings, for example, the target JVM version, target template, and test framework.
+project-wizard-2
+
+Set module dependencies between:
+iOS and multiplatform modules
+Android and multiplatform modules
+JVM modules
+project-wizard-3
+
+In the future, we are going to make the Kotlin Project Wizard even more flexible by adding more configuration options and templates.
+
+How to use
+Install the 1.4-M2 Kotlin plugin.
+In IntelliJ IDEA, click File | New | Project.
+In the panel on the left-hand side, select Kotlin (Experimental Wizard).
+Create your new Kotlin project.
+Consistent and well-described APIs with explicit API mode
+We’re introducing a new compiler mode to help library authors create consistent and well-described APIs. In this explicit API mode as it is called, the compiler performs additional checks on declarations exposed to the library’s public API:
+
+Visibility modifiers are required for declarations if the default visibility exposes them to the public API. This helps ensure that no declarations are exposed as public unintentionally.
+Explicit type specifications are required for properties and functions that are exposed to the public API. This guarantees that API users are aware of the types of API members they use.
+explicity-api-mode
+
+Depending on your configuration, these checks can produce errors (strict mode) or warnings (warning mode).
+
+We plan to add more checks in the future to make your library authoring experience better. You can learn more about them in this KEEP. But already you can try explicit API mode and share your feedback with us.
+
+To compile your module in explicit API mode, add one of the following lines to your Gradle build script:
+
+kotlin {   
+   explicitApi() // for strict mode
+   // or
+   explicitApiWarning() // for warning mode
+}
+In Groovy, you can use the alternative syntax:
+
+kotlin {   
+   explicitApi = 'strict'
+   // or
+   explicitApi = 'warning'
+}
+When using the command-line compiler, use the -Xexplicit-api compiler option with either strict or warning:
+
+-Xexplicit-api={strict|warning}
+Kotlin/Native support for suspending functions and other improvements
+In this preview, we’re finally adding support for Kotlin’s suspending functions in Swift and Objective-C, which covers just the basic cases for now. We keep working to give you the full power of coroutines in Swift and Objective-C applications. Aside from that, we’re ready to present some results of our work on performance and stability of Kotlin/Native.
+
+Support for Kotlin’s suspending functions in Swift and Objective-C
+We continue expanding the support for using key Kotlin features from Swift and Objective-C code. One of the known downsides in previous versions has been their incomplete support for Kotlin coroutines: suspending functions were not available from Swift or Objective-C code.
+
+In the M2 preview, we’re glad to present the basic support for suspending functions in Swift and Objective-C. Now, when you compile a Kotlin module into an Apple framework, suspending functions are available in it as functions with callbacks (completionHandler in the Swift/Objective-C terminology). When you have such functions in the generated framework’s header, you can call them from your Swift or Objective-C code and even override them.
+
+For example, if you write this Kotlin function:
+
+suspend fun queryData(id: Int): String = ...
+…then you can call it from Swift like so:
+
+queryData(id: 17) { result, error in
+   if let e = error {
+       print("ERROR: \(e)")
+   } else {
+       print(result!)
+   }
+}
+Note that in the M2 preview, you can call the suspending function only from the main thread.
+
+Running Kotlin/Native code with the gutter icon
+Previously, you could run Kotlin/Native code only in Terminal or by running a Gradle task in IntelliJ IDEA. Now you can easily run it with the gutter icon, similar to other Kotlin code.
+
+native-gutter-icon
+
+Performance improvements for C interop
+In the scope of improving Kotlin/Native’s performance, we’ve reworked how C interop libraries are built. (These libraries are artifacts that let you use declarations from C and Objective-C libraries from Kotlin code.) The changes are done under the hood, but what is visible is the increased performance and smaller artifacts: the new tooling produces interop libraries up to 4 times as fast as before, and artifacts are 25% to 30% the size they used to be!
+
+Using interop libraries is now faster, too, as compiling Kotlin projects with C interop takes less time with Kotlin 1.4-M2.
+
+Stabilization of compiler caching and Gradle daemon usage
+In 1.3.70, we introduced two new features for improving the performance of Kotlin/Native compilation: caching project dependencies and running the compiler from the Gradle daemon. These were still works in progress, so some of you might have experienced issues and lack of stability in certain cases.
+
+Thanks to your feedback, we’ve managed to fix numerous issues and improve the overall stability of these features. So, if you had issues with them, or if you haven’t had a chance to try the recent versions of Kotlin/Native, now is a great time to give it a try.
+
+Kotlin/JS improvements
+With 1.4-M2, the JavaScript target for Kotlin more closely aligns its Gradle naming conventions with those of other Kotlin targets. It also adds more fine-grained control over compiler settings, commonizes the @JsExport annotation, and enables CSS support through webpack by default.
+
+Gradle DSL Changes
+Naming changes
+To align more closely with the other Kotlin targets, we have changed the names for some commonly used parts of the Kotlin/JS Gradle configuration. Consider this default configuration block for a Kotlin/JS Gradle project in 1.4-M2, which illustrates the two naming changes we have made:
+
+kotlin {
+    js {
+        nodejs() // and/or browser()
+        binaries.executable()
+    }
+}
+target becomes js, which makes it consistent with the syntax used with the Kotlin multiplatform plugin.
+produceExecutable(), introduced in Kotlin 1.4-M1, becomes binaries.executable(), which makes it consistent with the naming used for Kotlin/Native.
+If you’d like to learn more about what binaries.executable() does, please refer to the 1.4-M1 blog post, section “Kotlin/JS | Gradle DSL changes”.
+
+Per-project compiler settings
+In Kotlin 1.4-M1, we first introduced the new IR compiler backend with optimized DCE, TypeScript declaration preview, and more, including a setting in gradle.properties to switch between default, IR, and both compiler modes. M2 introduces more fine-grained control over the used compiler mode on a per-project basis directly from the Gradle configuration.
+
+To switch between the different compiler modes, pass a compiler type to the js function in your Gradle build script. For example:
+
+kotlin {
+   js(IR) { // or: LEGACY, BOTH
+       // . . .
+   }
+}
+Setting the compiler type for a project like this overrides the default setting specified in your gradle.properties.
+
+Support for css-loader for webpack from Gradle
+Since the Kotlin/JS Gradle plugin uses webpack by default to create artifacts for the browser, there are a lot of settings which can be customized. While all options can be changed by directly modifying the webpack configuration files that are used to build your project, we want to provide access to the most commonly used settings directly via Gradle DSL.
+
+Kotlin 1.4-M2 enables webpack’s css-loader by default for projects targeting the browser. This means that adding CSS to your project, as well as dependencies that include style sheets, will now work out of the box in most cases, without any additional configuration. Previously, you might have encountered errors like Module parse failed: Unexpected character '@' (14:0) in such situations.
+
+If you want to adjust the behavior of this CSS integration, you can do so by using js.browser.webpackTask.cssSettings.
+
+With cssSettings.enabled, you can change whether your project should use css-loader at all (enabled by default).
+
+With cssSettings.mode, you can specify how any encountered CSS should be handled. The following values are available:
+
+"inline" (default): styles are added to the global <style> tag.
+"extract": styles are extracted into a separate file. They can then be included from an HTML page.
+"import": styles are processed as strings. This can be useful if you need access to the CSS from your code (e.g. val styles = require("main.css")).
+If you want to use different modes for the same project, you can use cssSettings.rules. Here, you can specify a list of KotlinWebpackCssRules, each of which defines a mode, as well as include and exclude patterns. If you would like to learn more about these patterns, please consult the webpack documentation on include and exclude rules.
+
+Customizable module name
+You can now change the JavaScript module name directly from the Gradle build script:
+
+js {
+   moduleName = "myModuleName"
+}
+This changes the name for the module which is generated in build/js/packages/myModuleName, including the corresponding .js and .d.ts file names. Note that this does not affect your webpacked output in build/distributions. To change the name of the webpacked file, you can use js.browser.webpackTask.outputFileName.
+
+Common code @JsExport annotation
+The @JsExport annotation, which you can use to make a top-level declaration available from JavaScript or TypeScript when using the IR compiler backend, is now available in common code. This eliminates the need to introduce a custom annotation and typealias, and helps pave the way towards conveniently building JavaScript libraries from multiplatform Kotlin projects.
+
+Additional quality-of-life improvements and notable fixes
+Gradle tasks used for typical operations for the browser and nodejs targets are now grouped in separate task groups. The kotlin browser and kotlin node groups will show up in the Gradle tool window in IntelliJ IDEA or when listing the tasks via ./gradlew tasks --all.
+When running tests for the node.js target, the debugger now properly stops at breakpoints.
+For projects and libraries both using both mode for compilation, klib dependencies are now properly resolved.
+Compatibility
+Note that Kotlin 1.4 is not backward-compatible with 1.3 in some corner cases. All such cases were carefully reviewed by the language committee and will be listed in the “compatibility guide” (similar to this one). At the moment, you can find this list in YouTrack.
+
+Pre-release notes
+Note that the backward compatibility guarantees do not cover pre-release versions. The features and the API can change in subsequent releases. When we reach a final RC, all binaries produced by pre-release versions will be outlawed by the compiler, and you will be required to recompile everything that was compiled by 1.4‑Mx.
+
+How to try the latest features
+As always, you can try Kotlin online at play.kotl.in.
+
+In IntelliJ IDEA and Android Studio, you can update the Kotlin Plugin to version 1.4-M2. See how to do this.
+
+If you want to work on existing projects that were created before installing the preview version, you need to configure your build for the preview version in Gradle or Maven.
+
+You can download the command-line compiler from the Github release page.
+
+You can use the following versions of the libraries published together with this release:
+
+kotlinx.atomicfu version: 0.14.3-1.4-M2
+kotlinx.coroutines version: 1.3.7-1.4-M2
+kotlinx.serialization version: 0.20.0-1.4-M2
+Please note that ktor will be available later.
+
+The release details and the list of compatible libraries are also available here.
+
+Share your feedback
+We’ll be very thankful if you find and report bugs to our issue tracker. We’ll try to fix all the important issues before the final release, which means you won’t need to wait until the next Kotlin release for your issues to be addressed.
+
+You are also welcome to join the #eap channel in Kotlin Slack (get an invite here). In this channel, you can ask questions, participate in discussions, and get notifications of new preview builds.
+
+Let’s Kotlin!
+
+External contributions
+We’d like to thank all of our external contributors whose pull requests were included in this release:
+
+Toshiaki Kameyama
+Victor Turansky
+Jinseong Jeon
+Steven Schäfer
+Juan Chen
+Mark Punzalan
+Kristoffer Andersen
+Mads Ager
+Nick
+Polina Koval
+Konstantin Virolainen
+n-p-s
+Jiaxiang Chen
+Matthew Gharrity
+Martynas Sateika
+Nadezhda Petelimova
+Philippe Ombredanne
+Pierre-Luc Carmel Biron
+Kevin Bierhoff
+Scott Weber
+Miguel Serra
+Ivan Gavrilovic
+Irene Dea
+Harry
+Stanislav Ruban
+Brian Plummer
+Adam McNeilly
