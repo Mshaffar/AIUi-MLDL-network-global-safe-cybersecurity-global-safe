@@ -1,0 +1,453 @@
+↑
+→
+W3C
+Network Information API
+Draft Community Group Report 11 May 2020
+
+Latest editor's draft:
+    https://wicg.github.io/netinfo/
+Editor:
+    Ilya Grigorik (Google) 
+Former editors:
+    Marcos Cáceres (Mozilla Corporation) 
+    Fernando Jiménez Moreno (Telefonica) 
+Participate:
+    GitHub WICG/netinfo 
+    File a bug 
+    Commit history 
+    Pull requests 
+Browser support:
+
+    More info
+
+Copyright © 2020 the Contributors to the Network Information API Specification, published by the Web Incubator Community Group under the W3C Community Contributor License Agreement (CLA). A human-readable summary is available.
+Abstract
+
+The Network Information API enables web applications to access information about the network connection in use by the device.
+Status of This Document
+
+This specification was published by the Web Incubator Community Group. It is not a W3C Standard nor is it on the W3C Standards Track. Please note that under the W3C Community Contributor License Agreement (CLA) there is a limited opt-out and other conditions apply. Learn more about W3C Community and Business Groups.
+Table of Contents
+
+    1.
+    Requirements and use cases
+        1.1
+        Provide an interface for determining the connection type currently used to communicate with the network.
+        1.2
+        Provide a way for scripts to be notified if the connection type changes.
+    2.
+    Examples of usage
+    3.
+    Definitions
+    4.
+    Connection types
+        4.1
+        Underlying connection technology
+        4.2
+        ConnectionType enum
+        4.3
+        Effective connection types
+        4.4
+        EffectiveConnectionType enum
+    5.
+    NavigatorNetworkInformation interface
+        5.1
+        connection attribute
+    6.
+    NetworkInformation interface
+        6.1
+        type attribute
+        6.2
+        effectiveType attribute
+            6.2.1
+            ECT Request Header Field
+        6.3
+        downlinkMax attribute
+        6.4
+        onchange attribute
+        6.5
+        downlink attribute
+            6.5.1
+            Downlink Request Header Field
+        6.6
+        rtt attribute
+            6.6.1
+            RTT Request Header Field
+        6.7
+        Underlying connection technology
+            6.7.1
+            Handling changes to the underlying connection
+        6.8
+        Privacy Considerations
+        6.9
+        IANA Considerations
+            6.9.1
+            ECT Request Header Field Registration
+            6.9.2
+            Downlink Request Header Field Registration
+            6.9.3
+            RTT Request Header Field Registration
+        6.10
+        Conformance
+        6.11
+        Acknowledgments
+    A.
+    References
+        A.1
+        Normative references 
+
+1. Requirements and use cases
+
+This document describes an API that addresses two specific requirements:
+1.1 Provide an interface for determining the connection type currently used to communicate with the network.
+
+It should be queryable in an ad hoc fashion from client pages, and should also be available in other contexts, like exposed to service workers.
+
+Example use cases:
+
+    A web application whose primary purpose is to stream media could check navigator.connection.type prior to playback. When it's set to 'cellular', it could advise users that their mobile network operator might be charging for the bandwidth, and only start automatic playback of previously cached content.
+    A web application that makes use of a service worker to cache resources during installation might have different bundles of assets that it might cache: a list of crucial assets that are cached unconditionally, and a bundle of larger, optional assets that are only cached ahead of time when navigator.connection.type is 'ethernet' or 'wifi'.
+    A web application that uses a service worker with a background sync handler might check the current navigator.connection.type value, and only transfer data inside the sync event handler if it is is 'ethernet' or 'wifi'.
+    A web application might make decision to enable offline mode based on network condition (e.g., when EDGE is not enough).
+
+1.2 Provide a way for scripts to be notified if the connection type changes.
+
+This allows developers to make dynamic changes to their user interface to inform the user that the network connection type has changed, and that it could impact them in some way. It also allows applications that were deferring the transfer of large amounts of data to automatically begin once a high-bandwidth network is detected.
+
+Example use cases:
+
+    A web application whose primary purpose is to stream media could dynamically change its user interface in response to updates to the connection type. This may afford a better user experience than waiting until a user attempts to playback and performing a one-off query. It allows applications to provide context about the connection in advance of user interaction.
+    A web application that allows for uploads or downloads might defer initiating the request when navigator.connection.type is set to 'cellular', and add a listener for changes to the connection. When a change to a high-bandwidth network type is detected, the request could be automatically started.
+
+2. Examples of usage
+
+This section is non-normative.
+
+For examples of the kinds of applications one can build with this API, see the Review of Apps that Use Network Information.
+Example 1
+
+// Get the connection type.
+var type = navigator.connection.type;
+
+// Get an upper bound on the downlink speed of the first network hop
+var max = navigator.connection.downlinkMax;
+
+function changeHandler(e) {
+  // Handle change to connection here.
+}
+
+// Register for event changes.
+navigator.connection.onchange = changeHandler;
+
+// Alternatively.
+navigator.connection.addEventListener('change', changeHandler);
+
+3. Definitions
+
+For clarity, a megabit is 1,000,000 bits, and megabits per second is equivalent to transferring:
+
+    1,000,000 bits per second
+    1,000 kilobits per second
+    125,000 bytes per second
+    125 kilobytes per second
+    and so on...
+
+4. Connection types
+4.1 Underlying connection technology
+
+This section defines the connection types and the underlying connection technology that the user agent is using (if any):
+
+bluetooth
+    A Bluetooth connection.
+cellular
+    A cellular connection (e.g., EDGE, HSPA, LTE, etc.).
+ethernet
+    An Ethernet connection.
+none
+    No network connection. The user agent will not contact the network when the user follows links or when a script requests a remote page (or knows that such an attempt would fail) - i.e., equivalent to navigator.onLine === false in HTML.
+mixed
+    The user agent is using multiple connection types.
+other
+    The connection type that is known, but not one of enumerated connection types.
+unknown
+    The user agent has established a network connection, but is unable, or unwilling, to determine the underlying connection technology.
+wifi
+    A Wi-Fi connection.
+wimax
+    A WiMAX connection.
+
+The connection types are represented in this API by the ConnectionType enum.
+4.2 ConnectionType enum
+
+WebIDL
+
+enum ConnectionType {
+  "bluetooth",
+  "cellular",
+  "ethernet",
+  "mixed",
+  "none",
+  "other",
+  "unknown",
+  "wifi",
+  "wimax"
+};
+
+4.3 Effective connection types
+
+This section defines the effective connection types (ECT):
+Table of effective connection types ECT 	Minimum RTT (ms) 	Maximum downlink (Kbps) 	Explanation
+slow-2g 	2000 	50 	The network is suited for small transfers only such as text-only pages.
+2g 	1400 	70 	The network is suited for transfers of small images.
+3g 	270 	700 	The network is suited for transfers of large assets such as high resolution images, audio, and SD video.
+4g 	0 	∞ 	The network is suited for HD video, real-time video, etc.
+
+The above round-trip and bandwidth values are based on real user measurement observations:
+
+    slow-2g is the 66.6th percentile of 2G observations
+    2g is the 50th percentile of 2G observations
+    3g is the 50th percentile of 3G observations
+
+The absolute values provided above are based on real user measurement on Chrome on Android, as captured in April 2017. The user agent MAY update these values in the future to reflect changes in the measurement data.
+
+The effective connection types are represented in this API by the EffectiveConnectionType enum.
+4.4 EffectiveConnectionType enum
+
+WebIDL
+
+enum EffectiveConnectionType {
+  "2g",
+  "3g",
+  "4g",
+  "slow-2g"
+};
+
+5. NavigatorNetworkInformation interface
+
+The Navigator and WorkerNavigator interface expose access to NetworkInformation interface by mixing in NavigatorNetworkInformation.
+
+WebIDL
+
+interface mixin NavigatorNetworkInformation {
+  [SameObject] readonly attribute NetworkInformation connection;
+};
+
+Navigator includes NavigatorNetworkInformation;
+WorkerNavigator includes NavigatorNetworkInformation;
+
+5.1 connection attribute
+
+The connection attribute, when getting, returns an object that implements the NetworkInformation interface.
+6. NetworkInformation interface
+
+The NetworkInformation interface provides a means to access information about the network connection the user agent is currently using. The EventTarget is defined in [DOM].
+
+WebIDL
+
+[Exposed=(Window,Worker)]
+interface NetworkInformation : EventTarget {
+  readonly attribute ConnectionType type;
+  readonly attribute EffectiveConnectionType effectiveType;
+  readonly attribute Megabit downlinkMax;
+  readonly attribute Megabit downlink;
+  readonly attribute Millisecond rtt;
+  attribute EventHandler onchange;
+};
+
+typedef unrestricted double Megabit;
+typedef unsigned long long Millisecond;
+
+This section also defines a number of HTTP request header fields that expose details about the user's network conditions, which servers can opt-into receiving. They can do that via the Client Hints infrastructure defined in [CLIENT-HINTS] and bound by the processing model defined in [CLIENT-HINTS-INFRASTRUCTURE].
+6.1 type attribute
+
+The type attribute, when getting, returns the connection type that the user agent is using.
+6.2 effectiveType attribute
+
+The effectiveType attribute, when getting, returns the effective connection type that is determined using a combination of recently observed rtt and downlink values.
+6.2.1 ECT Request Header Field
+
+The ECT request header field is a token that indicates the effectiveType, which is one of EffectiveConnectionType values, at the time when the request is made by the user agent. It is a Structured Header whose value must be a Token. [STRUCTURED-HEADERS]
+6.3 downlinkMax attribute
+
+The downlinkMax attribute represents an upper bound on the downlink speed of the first network hop. The reported value is in megabits per second and determined by the properties of the underlying connection technology.
+Note
+
+The user agent has no knowledge of the total number or the performance characteristics of the various network hops required to fulfill a particular request; different requests may follow different routes and have different performance characteristics. The reported <a>upper bound on the downlink speed of the first network hop</a> value is determined by the properties of the <a>underlying connection technology</a> of the first network hop. The end-to-end performance of any request cannot exceed this value, but it is also not a guarantee of performance and may be significantly worse.
+
+6.4 onchange attribute
+
+The onchange event handler attribute handles "change" events fired during the steps to update the connection values.
+6.5 downlink attribute
+
+The downlink attribute represents the effective bandwidth estimate in megabits per second, rounded to nearest multiple of 25 kilobits per second, and is based on recently observed application layer throughput across recently active connections, excluding connections made to private address space [RFC1918]. In absence of recent bandwidth measurement data, the attribute value is determined by the properties of the underlying connection technology.
+6.5.1 Downlink Request Header Field
+
+The Downlink request header field is a number that indicates the downlink value at the time when the request is made by the user agent. It is a Structured Header whose value must be a Decimal. [STRUCTURED-HEADERS]
+6.6 rtt attribute
+
+The rtt attribute represents the effective round-trip time estimate in milliseconds, rounded to nearest multiple of 25 milliseconds, and is based on recently observed application-layer RTT measurements across recently active connections, excluding connections made to private address space [RFC1918]. In absence of recent RTT measurement data, the attribute value is determined by the properties of the underlying connection technology.
+6.6.1 RTT Request Header Field
+
+The RTT request header field is a number that indicates the rtt value at the time when the request is made by the user agent. It is a Structured Header whose value must be an Integer. [STRUCTURED-HEADERS]
+6.7 Underlying connection technology
+
+The relationship between an underlying connection technology and its upper bound on the downlink speed of the first network hop is determined by the available network interfaces that may be used to fulfill new network requests.
+
+The downlinkMax for an available interface is determined via the standardized, or generally accepted, maximum download data rate captured in the table of maximum downlink speeds. Where possible, this value may be refined to report a more accurate upper bound based on current properties of the interface - e.g. signal strength, modulation algorithm, and other "network weather" variables.
+
+The upper bound on the downlink speed of the first network hop is determined by the rules described in handling changes to the underlying connection.
+Note
+
+The enumeration of available network interfaces and their generation and version is not directly exposed to script. Instead, downlinkMax exposes a single value in megabits per second that accounts for all available interfaces and their current network conditions.
+Table of maximum downlink speeds Connection type 	Underlying connection technology 	Generation or Version 	Max downlink speed (Mbit/s)
+wimax	WiMAX 1	rel 1	37
+WiMAX 1.5	rel 1.5	141
+WiMAX 2	rel 2	365
+cellular	GSM	2G	0.01
+IDEN	2G	0.064
+CDMA	2G	0.115
+1xRTT	2.5G	0.153
+GPRS	2.5G	0.237
+EDGE	2.75G	0.384
+UMTS	3G	2
+EVDO Rev 0	3.5G	2.46
+EVDO Rev A	3.5G	3.1
+HSPA	3.5G	3.6
+EVDO Rev B	3.75G	14.7
+HSDPA	3.75G	14.3
+HSUPA	3.75G	14.4
+EHRPD	3.9G	21
+HSPAP	3.9G	42
+LTE	4G	100
+LTE Advanced	4G	100
+bluetooth	1.2	1.2	1
+2.1 + Enhanced Data Rate (EDR)	2.1+EDR	3
+3.0 + High Speed (HS)	3.0+HS	24
+4.0 + Bluetooth Low Energy (BLE)	4.0+BLE	1
+ethernet	Ethernet	10	10
+Fast Ethernet	100	100
+Gigabit Ethernet	GigE	1000
+10-gigabit Ethernet	10 GigE	10000
+wifi	b	802.11b	11
+g	802.11g	54
+n	802.11n	600
+ac	802.11ac	6933.3
+ad	802.11ad	7000
+unknown	unknown	unknown	+Infinity
+none	none	none	0
+other	other	other	user agent specific.
+6.7.1 Handling changes to the underlying connection
+
+When the properties of the underlying connection technology change, due to a switch to a different connection type or effective connection type, change in upper bound on the downlink speed of the first network hop, or change in effective downlink or rtt estimates, the user agent MUST run the steps to update the connection values:
+
+    Let new-type be the connection type that represents the underlying connection technology.
+    Let new-effective-type be the effective connection type determined by current downlink and rtt values.
+    Let new-downlink be the result of:
+        Rounding downlink value to nearest multiple of 25 kilobits per second.
+        If the resulting value is 10% greater or smaller than the value of connection.downlink, then set new-dowlink to resulting value. Otherwise, set new-downlink to the value of connection.downlink.
+    Let new-rtt be the result of:
+        Rounding rtt value to nearest multiple of 25 milliseconds.
+        If the resulting value is 10% greater or smaller than the value of connection.rtt, then set new-rtt to resulting value. Otherwise, set new-rtt to the value of connection.rtt.
+    If new-type is "none", set max-value to 0.
+    if new-type is "unknown", set max-value to +Infinity.
+    If new-type is "mixed", set max-value to an applicable value for the interface configuration used to service new network requests - e.g. if multiple interfaces may be used, sum their downlinkMax for an available interface values.
+    Otherwise, set max-value to downlinkMax for an available interface.
+    If max-value is not equal to the value of connection.downlinkMax, or if new-type is not equal to the value of connection.type, or if new-downlink is not equal to the value of connection.downlink, or if new-rtt is not equal to the value of connection.rtt:
+        Using the networking task source, queue a task to perform the following:
+            Set connection.downlinkMax to max-value.
+            Set connection.type to new-type.
+            set connection.effectiveType to new-effective-type.
+            Set connection.downlink to new-downlink.
+            Set connection.rtt to new-rtt.
+            Fire an event named change at the NetworkInformation object.
+
+6.8 Privacy Considerations
+
+The Network Information API exposes information about the observed end-to-end network bandwidth and latency, and the first network hop between the user agent and the server; specifically, the type of connection and the upper bound of the downlink speed, as well as signals whenever this information changes. Such information may be used to:
+
+    Fingerprint a user based on characteristics of a particular network (e.g. type and downlink estimates) at a point in time, and by observing change in such characteristics over a period of time.
+    Fingerprint a user based on transitions between one or more networks (e.g. based on order of transitions by type, downlink estimates, and time).
+    Infer user location (e.g. are they home, at work, or in transit) based on above criteria.
+
+However, above considerations are not new, and sufficiently motivated attackers may already obtain such information using other technologies:
+
+    The attacker can use JavaScript to observe the duration (e.g. time from start of fetch to onload event) of any network fetch (same or cross-origin) on the client, and may get more detailed timing data about the same fetch via the Resource Timing API.
+    The attacker can use WebRTC to identify client's public and private IP addresses via STUN, or similar mechanisms.
+    The attacker can observe the client IP, fetch duration, RTT, transfer speed, and other low-level socket metrics of a fetch on the server.
+
+Further, by repeating one of the above strategies (e.g. via invoking periodic fetch or refresh of a resource; via periodic SSE or WebSocket messages; via periodic STUN requests, etc.), the attacker can observe changes over time in the performance characteristics of client's connection and IP address. Such data can then be used to refine the user fingerprint, infer users location (e.g. are they home, at work, or in transit), and extract various behavioral patterns.
+
+The above list is not a complete overview. However, as the above examples illustrate, the attacks are possible both from the sender and the receiver:
+
+    If the attacker can initiate or observe a network fetch of any kind from the client, then they can observe its performance characteristics and how they change over time.
+    If the attacker can convince the client to fetch a resource from their server, then they can similarly observe the performance characteristics of the fetch and how they change over time.
+
+Mitigating such attacks initiated from the client requires preventing the attacker from observing and initiating network requests - e.g., use HTTPS to prevent trivial content injection by malicious parties; disable JavaScript to prevent scripted resource fetch of any kind. Mitigating attacks from the sender is possible via the use of a VPN or an HTTP proxy - e.g. to hide the client's true IP address, to introduce additional latency, and so on.
+
+As such, while the Network Information API makes it easier to obtain information about the end-to-end network throughput, latency, and the first network hop, by avoiding the need to observe or make network requests, it does not expose anything that is not already available to a sufficiently-motivated attacker.
+
+If the client wants to mitigate this class of attacks, they should disable JavaScript, monitor that all outbound requests are made to trusted origins, and make diligent use of anonymizing VPN/proxy services.
+6.9 IANA Considerations
+
+The following three HTTP request header fields should be added to the permanent registry of message header fields (see [RFC3864]), taking into account the guidelines given by HTTP/1.1 [RFC7231].
+6.9.1 ECT Request Header Field Registration
+
+    Header Field Name: ECT
+    Applicable Protocol: Hypertext Transfer Protocol (HTTP)
+    Status: Standard
+    Author/Change controller: W3C
+    Specification document(s): W3C TR https://www.w3.org/TR/netinfo/
+
+6.9.2 Downlink Request Header Field Registration
+
+    Header Field Name: Downlink
+    Applicable Protocol: Hypertext Transfer Protocol (HTTP)
+    Status: Standard
+    Author/Change controller: W3C
+    Specification document(s): W3C TR https://www.w3.org/TR/netinfo/
+
+6.9.3 RTT Request Header Field Registration
+
+    Header Field Name: RTT
+    Applicable Protocol: Hypertext Transfer Protocol (HTTP)
+    Status: Standard
+    Author/Change controller: W3C
+    Specification document(s): W3C TR https://www.w3.org/TR/netinfo/
+
+6.10 Conformance
+
+As well as sections marked as non-normative, all authoring guidelines, diagrams, examples, and notes in this specification are non-normative. Everything else in this specification is normative.
+
+The key words MAY and MUST in this document are to be interpreted as described in BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all capitals, as shown here.
+
+There is only one class of product that can claim conformance to this specification: a user agent.
+6.11 Acknowledgments
+
+This document reuses text from the [HTML] specification as permitted by the license of that specification.
+A. References
+A.1 Normative references
+
+[CLIENT-HINTS]
+    HTTP Client Hints. IETF. Internet-Draft. URL: https://tools.ietf.org/html/draft-grigorik-http-client-hints
+[CLIENT-HINTS-INFRASTRUCTURE]
+    Client Hints Infrastructure. WICG. cg-draft. URL: https://wicg.github.io/client-hints-infrastructure/
+[DOM]
+    DOM Standard. Anne van Kesteren. WHATWG. Living Standard. URL: https://dom.spec.whatwg.org/
+[HTML]
+    HTML Standard. Anne van Kesteren; Domenic Denicola; Ian Hickson; Philip Jägenstedt; Simon Pieters. WHATWG. Living Standard. URL: https://html.spec.whatwg.org/multipage/
+[RFC1918]
+    Address Allocation for Private Internets. Y. Rekhter; B. Moskowitz; D. Karrenberg; G. J. de Groot; E. Lear. IETF. February 1996. Best Current Practice. URL: https://tools.ietf.org/html/rfc1918
+[RFC2119]
+    Key words for use in RFCs to Indicate Requirement Levels. S. Bradner. IETF. March 1997. Best Current Practice. URL: https://tools.ietf.org/html/rfc2119
+[RFC3864]
+    Registration Procedures for Message Header Fields. G. Klyne; M. Nottingham; J. Mogul. IETF. September 2004. Best Current Practice. URL: https://tools.ietf.org/html/rfc3864
+[RFC7231]
+    Hypertext Transfer Protocol (HTTP/1.1): Semantics and Content. R. Fielding, Ed.; J. Reschke, Ed.. IETF. June 2014. Proposed Standard. URL: https://httpwg.org/specs/rfc7231.html
+[RFC8174]
+    Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words. B. Leiba. IETF. May 2017. Best Current Practice. URL: https://tools.ietf.org/html/rfc8174
+[STRUCTURED-HEADERS]
+    Structured Headers for HTTP. IETF. Internet-Draft. URL: https://tools.ietf.org/html/draft-ietf-httpbis-header-structure
+[webidl]
+    Web IDL. Boris Zbarsky. W3C. 15 December 2016. W3C Editor's Draft. URL: https://heycam.github.io/webidl/
+
+↑ 
