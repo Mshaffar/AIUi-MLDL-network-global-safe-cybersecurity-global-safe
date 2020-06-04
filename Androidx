@@ -1,0 +1,169 @@
+
+Android Developers
+
+M.Shaffar irfar
+Documentation
+
+Android Developers
+Android Developers
+Docs
+Reference
+Package Index
+Kotlin |Java
+These are the API packages. See all API classes.
+
+android.support.v4.media	
+android.support.v4.media.session	
+androidx.activity	
+androidx.activity.result	
+androidx.activity.result.contract	
+androidx.ads.identifier	
+androidx.ads.identifier.provider	
+androidx.annotation	
+androidx.annotation.experimental	
+androidx.appcompat.app	
+androidx.appcompat.content.res	
+androidx.appcompat.graphics.drawable	
+androidx.appcompat.view	
+androidx.appcompat.widget	
+androidx.arch.core.executor.testing	
+androidx.arch.core.util	
+androidx.asynclayoutinflater.view	
+androidx.autofill	
+androidx.biometric	
+androidx.browser.browseractions	
+androidx.browser.customtabs	
+androidx.browser.trusted	
+androidx.browser.trusted.sharing	
+androidx.browser.trusted.splashscreens	
+androidx.camera.camera2	
+androidx.camera.camera2.interop	
+androidx.camera.core	
+androidx.camera.extensions	
+androidx.camera.lifecycle	
+androidx.camera.view	
+androidx.cardview.widget	
+androidx.collection	
+androidx.concurrent.futures	
+androidx.contentpager.content	
+androidx.coordinatorlayout.widget	
+androidx.core.accessibilityservice	
+androidx.core.animation	
+androidx.core.app	
+androidx.core.content	
+androidx.core.content.pm	
+androidx.core.content.res	
+androidx.core.database	
+androidx.core.database.sqlite	
+androidx.core.graphics	
+androidx.core.graphics.drawable	
+androidx.core.hardware.display	
+androidx.core.hardware.fingerprint	
+androidx.core.location	
+androidx.core.math	
+androidx.core.net	
+androidx.core.os	
+androidx.core.provider	
+androidx.core.role	
+androidx.core.telephony.mbms	
+androidx.core.text	
+androidx.core.text.util	
+androidx.core.util	
+androidx.core.view	
+androidx.core.view.accessibility	
+androidx.core.view.animation	
+androidx.core.view.inputmethod	
+androidx.core.widget	
+androidx.cursoradapter.widget	
+androidx.customview.view	
+androidx.customview.widget	
+androidx.documentfile.provider	
+androidx.drawerlayout.widget	
+androidx.dynamicanimation.animation	
+androidx.emoji.bundled	
+androidx.emoji.text	
+androidx.emoji.widget	
+androidx.enterprise.feedback	
+androidx.exifinterface.media	
+androidx.fragment.app	
+androidx.fragment.app.testing	
+androidx.gridlayout.widget	
+androidx.heifwriter	
+androidx.interpolator.view.animation	
+androidx.leanback.app	
+Support classes providing high level Leanback user interface building blocks.
+
+androidx.leanback.database	
+androidx.leanback.graphics	
+androidx.leanback.media	
+androidx.leanback.preference	
+androidx.leanback.system	
+androidx.leanback.widget	
+Support classes providing low level Leanback user interface building blocks: widgets and helpers.
+
+androidx.leanback.widget.picker	
+androidx.legacy.content	
+androidx.lifecycle	
+androidx.loader.app	
+androidx.loader.content	
+androidx.localbroadcastmanager.content	
+androidx.media	
+androidx.media.app	
+androidx.media.session	
+androidx.media2.common	
+androidx.media2.player	
+androidx.media2.session	
+androidx.media2.widget	
+androidx.mediarouter.app	
+androidx.mediarouter.media	
+androidx.navigation	Navigation is a framework for navigating between 'destinations' within an Android application that provides a consistent API whether destinations are implemented as Fragments, Activities, or other components.
+androidx.navigation.fragment	The NavHostFragment provides a NavHost suitable for using Fragments as destinations in your navigation graphs via <fragment> elements.
+androidx.navigation.ui	
+androidx.paging	
+androidx.palette.graphics	
+androidx.percentlayout.widget	
+androidx.preference	The Preference library allows you to build interactive settings screens, without needing to handle interacting with device storage or managing the user interface.
+androidx.print	
+androidx.recommendation.app	
+androidx.recyclerview.selection	A RecyclerView addon library providing support for item selection.
+androidx.recyclerview.widget	
+androidx.remotecallback	
+androidx.remotecallback.compiler	
+androidx.room	Room is a Database Object Mapping library that makes it easy to access database on Android applications.
+androidx.room.migration	
+androidx.room.testing	
+androidx.savedstate	
+androidx.security.crypto	
+androidx.slice	
+androidx.slice.builders	
+androidx.slice.core	
+androidx.slice.widget	
+androidx.slidingpanelayout.widget	
+androidx.sqlite.db	
+androidx.sqlite.db.framework	
+androidx.swiperefreshlayout.widget	
+androidx.textclassifier	
+androidx.transition	AndroidX Transition Library provides Transition API back to API level 14.
+androidx.tvprovider.media.tv	
+androidx.vectordrawable.graphics.drawable	
+androidx.versionedparcelable	
+androidx.viewpager.widget	
+androidx.viewpager2.adapter	
+androidx.viewpager2.widget	
+androidx.wear.activity	
+androidx.wear.ambient	
+androidx.wear.utils	
+androidx.wear.widget	
+androidx.wear.widget.drawer	
+androidx.webkit	The androidx.webkit library is a static library you can add to your Android application in order to use android.webkit APIs that are not available for older platform versions.
+androidx.window	
+androidx.window.extensions	
+androidx.work	WorkManager is a library used to enqueue deferrable work that is guaranteed to execute sometime after its Constraints are met.
+androidx.work.impl.diagnostics	
+androidx.work.testing	WorkManager Testing is a library for testing app code that runs using WorkManager.
+org.chromium.support_lib_boundary.util	
+Was this page helpful?
+Content and code samples on this page are subject to the licenses described in the Content License. Java is a registered trademark of Oracle and/or its affiliates.
+
+Last updated 2020-04-29.
+
