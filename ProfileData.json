@@ -1,0 +1,38 @@
+{
+  "Name": "M.Shaffar irfar",
+  "JobRoles": [
+    "Developer"
+  ],
+  "BusinessTypes": [
+    "Online Support"
+  ],
+  "IsOptedInToEmails": true,
+  "CourseProgress": [
+    {
+      "CourseName": "Advanced Google Analytics",
+      "StartDate": 20200602,
+      "CourseCompleted": false,
+      "AssessmentsProgress": [
+        {
+          "Title": "Assessment 1",
+          "Passed": true
+        }
+      ]
+    },
+    {
+      "CourseName": "Google Analytics for Power Users",
+      "StartDate": 20200602,
+      "CourseCompleted": false,
+      "AssessmentsProgress": [
+        {
+          "Title": "Assessment 1",
+          "Passed": true
+        },
+        {
+          "Title": "Assessment 2",
+          "Passed": true
+        }
+      ]
+    }
+  ]
+}
