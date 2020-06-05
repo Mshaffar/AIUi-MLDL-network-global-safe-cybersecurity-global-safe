@@ -1,0 +1,583 @@
+<head>
+  <meta charset="utf-8" />
+  <title>
+    
+      
+        
+        CLI documentation | 
+      
+      
+    npm Documentation
+  </title>
+  <link rel="stylesheet" type="text/css" href="/assets/css/style.css">
+  <link rel="icon" type="image/ico" href="/assets/images/favicon.ico" />
+  <meta name="viewport" content="width=device-width,minimum-scale=1.0,initial-scale=1,user-scalable=yes">
+</head>
+<header class="header">
+  <div class="header-links">
+    <a href="https://docs.npmjs.com">docs home</a>
+    <a href="https://npmjs.com/support">contact support</a>
+    <a href="https://npm.community">npm.community</a>
+    <a id="www-link" href="https://www.npmjs.com">npmjs.com</a>
+  </div>
+</header>
+
+
+<div class="container">
+  <h1>CLI documentation</h1>
+
+  
+
+
+  
+
+  
+    <ul class="category-articles">
+    
+
+    
+      
+        <li>
+          <h2>
+            <a href="/cli-documentation/cli-commands">CLI commands</a>
+          </h2>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/access.html">access <span class='faint subtitle'>Set access level on published packages</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/adduser.html">adduser <span class='faint subtitle'>Set access level on published packages</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/audit.html">audit <span class='faint subtitle'>Run a security audit</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/bin.html">bin <span class='faint subtitle'>Display npm bin folder</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/bugs.html">bugs <span class='faint subtitle'>Bugs for a package in a web browser maybe</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/build.html">build <span class='faint subtitle'>Build a package</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/bundle.html">bundle <span class='faint subtitle'>REMOVED</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/cache.html">cache <span class='faint subtitle'>Manipulates packages cache</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/ci.html">ci <span class='faint subtitle'>Install a project with a clean slate</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/completion.html">completion <span class='faint subtitle'>Tab Completion for npm</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/config.html">config <span class='faint subtitle'>Manage the npm configuration files</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/dedupe.html">dedupe <span class='faint subtitle'>Reduce duplication</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/deprecate.html">deprecate <span class='faint subtitle'>Deprecate a version of a package</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/dist-tag.html">dist-tag <span class='faint subtitle'>Modify package distribution tags</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/docs.html">docs <span class='faint subtitle'>Docs for a package in a web browser maybe</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/doctor.html">doctor <span class='faint subtitle'>Check your environments</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/edit.html">edit <span class='faint subtitle'>Edit an installed package</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/explore.html">explore <span class='faint subtitle'>Browse an installed package</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/fund.html">fund <span class='faint subtitle'>Retrieve funding information</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/help-search.html">help-search <span class='faint subtitle'>Search npm help documentation</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/help.html">help <span class='faint subtitle'>Get help on npm</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/hook.html">hook <span class='faint subtitle'>Manage registry hooks</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/init.html">init <span class='faint subtitle'>create a package.json file</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/install-ci-test.html">install-ci-test <span class='faint subtitle'>Install a project with a clean slate and run tests</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/install-test.html">install-test <span class='faint subtitle'>Install package(s) and run tests</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/install.html">install <span class='faint subtitle'>Install a package</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/link.html">link <span class='faint subtitle'>Symlink a package folder</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/logout.html">logout <span class='faint subtitle'>Log out of the registry</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/ls.html">ls <span class='faint subtitle'>List installed packages</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/npm.html">npm <span class='faint subtitle'>javascript package manager</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/org.html">org <span class='faint subtitle'>Manage orgs</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/outdated.html">outdated <span class='faint subtitle'>Check for outdated packages</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/owner.html">owner <span class='faint subtitle'>Manage package owners</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/pack.html">pack <span class='faint subtitle'>Create a tarball from a package</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/ping.html">ping <span class='faint subtitle'>Ping npm registry</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/prefix.html">prefix <span class='faint subtitle'>Display prefix</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/profile.html">profile <span class='faint subtitle'>Change settings on your registry profile</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/prune.html">prune <span class='faint subtitle'>Remove extraneous packages</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/publish.html">publish <span class='faint subtitle'>Publish a package</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/rebuild.html">rebuild <span class='faint subtitle'>Rebuild a package</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/repo.html">repo <span class='faint subtitle'>Open package repository page in the browser</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/restart.html">restart <span class='faint subtitle'>Restart a package</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/root.html">root <span class='faint subtitle'>Display npm root</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/run-script.html">run-script <span class='faint subtitle'>Run arbitrary package scripts</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/search.html">search <span class='faint subtitle'>Search for packages</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/shrinkwrap.html">shrinkwrap <span class='faint subtitle'>Lock down dependency versions for publication</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/star.html">star <span class='faint subtitle'>Mark your favorite packages</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/stars.html">stars <span class='faint subtitle'>View packages marked as favorites</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/start.html">start <span class='faint subtitle'>Start a package</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/stop.html">stop <span class='faint subtitle'>Stop a package</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/team.html">team <span class='faint subtitle'>Manage organization teams and team memberships</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/test.html">test <span class='faint subtitle'>Test a package</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/token.html">token <span class='faint subtitle'>Manage your authentication tokens</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/uninstall.html">uninstall <span class='faint subtitle'>Remove a package</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/unpublish.html">unpublish <span class='faint subtitle'>Remove a package from the registry</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/update.html">update <span class='faint subtitle'>Update a package</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/version.html">version <span class='faint subtitle'>Bump a package version</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/view.html">view <span class='faint subtitle'>View registry info</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/cli-commands/whoami.html">whoami <span class='faint subtitle'>Display npm username</span></a>
+        </li>
+      
+    
+    </ul>
+
+
+  
+    <ul class="category-articles">
+    
+
+    
+      
+        <li>
+          <h2>
+            <a href="/cli-documentation/configuring-npm">Configuring npm</a>
+          </h2>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/configuring-npm/folders.html">folders <span class='faint subtitle'>Folder Structures Used by npm</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/configuring-npm/install.html">install <span class='faint subtitle'>Download and install node and npm</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/configuring-npm/npmrc.html">npmrc <span class='faint subtitle'>The npm config files</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/configuring-npm/package-json.html">package.json <span class='faint subtitle'>Specifics of npm's package.json handling</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/configuring-npm/package-lock-json.html">package-lock.json <span class='faint subtitle'>A manifestation of the manifest</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/configuring-npm/package-locks.html">package-locks <span class='faint subtitle'>An explanation of npm lockfiles</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/configuring-npm/shrinkwrap-json.html">shrinkwrap.json <span class='faint subtitle'>A publishable lockfile</span></a>
+        </li>
+      
+    
+    </ul>
+
+
+  
+    <ul class="category-articles">
+    
+
+    
+      
+    
+    </ul>
+
+
+  
+    <ul class="category-articles">
+    
+
+    
+      
+        <li>
+          <h2>
+            <a href="/cli-documentation/using-npm">Using npm</a>
+          </h2>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/using-npm/config.html">config <span class='faint subtitle'>More than you probably want to know about npm configuration</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/using-npm/developers.html">developers <span class='faint subtitle'>Developer Guide</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/using-npm/disputes.html">disputes <span class='faint subtitle'>Handling Module Name Disputes</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/using-npm/orgs.html">orgs <span class='faint subtitle'>Working with Teams & Orgs</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/using-npm/registry.html">registry <span class='faint subtitle'>The JavaScript Package Registry</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/using-npm/removal.html">removal <span class='faint subtitle'>Cleaning the Slate</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/using-npm/scope.html">scope <span class='faint subtitle'>Scoped packages</span></a>
+        </li>
+      
+    
+      
+        <li>
+          > <a href="/using-npm/scripts.html">scripts <span class='faint subtitle'>How npm handles the "scripts" field</span></a>
+        </li>
+      
+    
+    </ul>
+
+
+  
+</div>
+
+<footer>
+  <div class="container">
+
+    
+
+    <div id="npm-install-instructions">
+      <p>
+        The current stable version of npm is <a id="npm-stable-version" href="https://github.com/npm/cli/releases/latest">here</a>. To upgrade, run: <code>npm install <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="e08e908da08c8194859394">[email&#160;protected]</a> -g</code>
+      </p>
+    </div>
+
+    <p>
+     To report bugs or submit feature requests for the docs, please <a href="https://npm.community/c/support/docs-needed">post here.</a> Submit npm issues <a href="https://npm.community/c/bugs">here</a>.
+    </p>
+
+  </div>
+</footer>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  (function() {
+    if (document.querySelectorAll) {
+      var selector = [
+        '.article h2', '.article h3', '.article h4', '.article h5', '.article h6',
+        '.cli-article h2', '.cli-article h3', '.cli-article h4', '.cli-article h5', '.cli-article h6'
+      ].join(',')
+
+      Array.prototype.slice.call(document.querySelectorAll(selector)).forEach(function(elem) {
+        var link = document.createElement('a')
+        link.href = '#' + elem.id
+        link.innerText = elem.innerText
+        elem.innerText = ''
+
+        elem.appendChild(link)
+
+        var icon = document.createElement('span')
+        icon.classList.add('anchor-icon')
+        icon.innerText = '§'
+        link.appendChild(icon)
+      })
+    }
+  })()
+</script>
+
+<script src="/assets/js/marketing/google_analytics.js" type="text/javascript"></script>
+<script src="/assets/js/marketing/eloqua.js" type="text/javascript"></script>
+
