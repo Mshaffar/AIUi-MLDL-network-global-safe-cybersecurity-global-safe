@@ -1,0 +1,83 @@
+Adding Pods to an Xcode project
+Before you begin
+Check the Specs repository or cocoapods.org to make sure the libraries you would like to use are available.
+Install CocoaPods on your computer.
+<Installation
+Create a Podfile, and add your dependencies:
+target 'MyApp' do
+  pod 'AFNetworking', '~> 3.0'
+  pod 'FBSDKCoreKit', '~> 4.9'
+end
+Run $ pod install in your project directory.
+Open App.xcworkspace and build.
+<Creating a new Xcode project with CocoaPods
+To create a new project with CocoaPods, follow these simple steps:
+
+Create a new project in Xcode as you would normally.
+Open a terminal window, and $ cd into your project directory.
+Create a Podfile. This can be done by running $ pod init.
+Open your Podfile. The first line should specify the platform and version supported.
+platform :ios, '9.0'
+In order to use CocoaPods you need to define the Xcode target to link them to. So for example if you are writing an iOS app, it would be the name of your app. Create a target section by writing target '$TARGET_NAME' do and an end a few lines after.
+Add a CocoaPod by specifying pod '$PODNAME' on a single line inside your target block.
+target 'MyApp' do
+  pod 'ObjectiveSugar'
+end
+Save your Podfile.
+Run $ pod install
+Open the MyApp.xcworkspace that was created. This should be the file you use everyday to create your app.
+<Integration with an existing workspace
+Integrating CocoaPods with an existing workspace requires one extra line in your Podfile. Simply specify the .xcworkspace filename in outside your target blocks like so:
+
+workspace 'MyWorkspace'
+<When to use pod install vs pod update?
+Many people are confused about when to use pod install and when to use pod update. Especially, they often use pod update where they should instead use pod install.
+
+You can find a detailed explanation about when to use each and what are the intended usage of each command in this dedicated guide.
+
+<Should I check the Pods directory into source control?
+Whether or not you check in your Pods folder is up to you, as workflows vary from project to project. We recommend that you keep the Pods directory under source control, and don't add it to your .gitignore. But ultimately this decision is up to you:
+
+<Benefits of checking in the Pods directory
+After cloning the repo, the project can immediately build and run, even without having CocoaPods installed on the machine. There is no need to run pod install, and no Internet connection is necessary.
+The Pod artifacts (code/libraries) are always available, even if the source of a Pod (e.g. GitHub) were to go down.
+The Pod artifacts are guaranteed to be identical to those in the original installation after cloning the repo.
+<Benefits of ignoring the Pods directory
+The source control repo will be smaller and take up less space.
+As long as the sources (e.g. GitHub) for all Pods are available, CocoaPods is generally able to recreate the same installation. (Technically there is no guarantee that running pod install will fetch and recreate identical artifacts when not using a commit SHA in the Podfile. This is especially true when using zip files in the Podfile.)
+There won't be any conflicts to deal with when performing source control operations, such as merging branches with different Pod versions.
+Whether or not you check in the Pods directory, the Podfile and Podfile.lock should always be kept under version control.
+
+<What is Podfile.lock?
+This file is generated after the first run of pod install, and tracks the version of each Pod that was installed. For example, imagine the following dependency specified in the Podfile:
+
+pod 'RestKit'
+Running pod install will install the current version of RestKit, causing a Podfile.lock to be generated that indicates the exact version installed (e.g. RestKit 0.10.3). Thanks to the Podfile.lock, running pod install on this hypothetical project at a later point in time on a different machine will still install RestKit 0.10.3 even if a newer version is available. CocoaPods will honour the Pod version in Podfile.lock unless the dependency is updated in the Podfile or pod update is called (which will cause a new Podfile.lock to be generated). In this way CocoaPods avoids headaches caused by unexpected changes to dependencies.
+
+There's a great video from Google about how this works: "CocoaPods and Lockfiles (Route 85)".
+
+<What is happening behind the scenes?
+In Xcode, with references directly from the ruby source, it:
+
+Creates or updates a workspace.
+Adds your project to the workspace if needed.
+Adds the CocoaPods static library project to the workspace if needed.
+Adds libPods.a to: targets => build phases => link with libraries.
+Adds the CocoaPods Xcode configuration file to your app’s project.
+Changes your app's target configurations to be based on CocoaPods's.
+Adds a build phase to copy resources from any pods you installed to your app bundle. i.e. a ‘Script build phase’ after all other build phases with the following:
+Shell: /bin/sh
+Script: ${SRCROOT}/Pods/PodsResources.sh
+Note that steps 3 onwards are skipped if the CocoaPods static library is already in your project. This is largely based on Jonah Williams' work on Static Libraries.
+
+<Pods and Submodules
+CocoaPods and git submodules attempt to solve very similar problems. Both strive to simplify the process of including 3rd party code in your project. Submodules link to a specific commit of that project, while a CocoaPod is tied to a versioned developer release.
+
+<Switching from submodules to CocoaPods
+Before you decide to make the full switch to CocoaPods, make sure that the libraries you are currently using are all available. It is also a good idea to record the versions of the libraries you are currently using, so that you can setup CocoaPods to use the same ones. It's also a good idea to do this incrementally, going dependency by dependency instead of one big move.
+
+Install CocoaPods, if you have not done so already
+Create your Podfile
+Remove the submodule reference
+Add a reference to the removed library in your Podfile
+Run pod install
