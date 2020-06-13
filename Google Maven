@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>
+  <title>Google's Maven Repository</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+</head>
+
+<style>
+  body {
+    font-family: monospace;
+  }
+  h1.logo {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  div.indexItem {
+    cursor: pointer;
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
+  div.indexItem[disabled] {
+    cursor: auto;
+  }
+  span.caret::before {
+    content: "+";
+    color: lightgrey;
+    font-weight: bold;
+    display: inline-block;
+  }
+  span.caret.has_child::before {
+    content: "+";
+    color: black;
+    font-weight: bold;
+    display: inline-block;
+  }
+  span.caret.has_child.expand::before {
+    content: "-";
+  }
+</style>
+
+<body ng-app="MavenIndex" ng-controller="MavenIndexController as index">
+
+  <div style="margin-left:25px; margin-right:25px">
+    <h1 class="logo">
+      Google's Maven Repository
+    </h1>
+    <form style="margin-left:25px; margin-right:25px" class="find" ng-submit="filter(searchTerm)">
+      <input placeholder="Find artifacts" type="text" ng-disabled="busy" ng-model="searchTerm"></input>
+      <button type="button" ng-disabled="busy" ng-click="filter(searchTerm)">Find</button>
+      <button type="button" ng-disabled="busy || searchTerm.length==0" ng-click="clearFilter()">Clear</button>
+    </form>
+  </div>
+
+  <!-- The entire tree -->
+  <div style="margin-left:5%; margin-top:25px; margin-bottom:50px" ng-cloak>
+    <div ng-if="allHidden || displayTree.length==0">
+      <span style="color: darkgrey; font-weight: bold">(Nothing to show)</span>
+    </div>
+
+    <!-- Group list -->
+    <div ng-repeat="group in displayTree" ng-if="group.visible">
+      <div class="indexItem" ng-click="group.toggle()">
+        <span class= "caret" ng-class="{'expand': group.expanded, 'has_child': group.subnode.length}"></span>
+        <span ng-if="group.highlight">{{group.text.slice(0, group.highlight[0])}}<mark>{{group.text.slice(group.highlight[0], group.highlight[1])}}</mark>{{group.text.slice(group.highlight[1])}}</span>
+        <span ng-if="!group.highlight">{{::group.text}}</span>
+      </div>
+      <!-- Artifacts subtree visibility -->
+      <div style="margin-left:20px" ng-if="group.expanded">
+
+        <!-- Artifact list -->
+        <div ng-repeat="artifact in group.subnode" ng-if="artifact.visible">
+          <div class="indexItem" ng-click="artifact.toggle()">
+            <span class= "caret has_child" ng-class="{'expand': artifact.expanded}"></span>
+            <span ng-if="artifact.highlight">{{artifact.text.slice(0, artifact.highlight[0])}}<mark>{{artifact.text.slice(artifact.highlight[0], artifact.highlight[1])}}</mark>{{artifact.text.slice(artifact.highlight[1])}}</span>
+            <span ng-if="!artifact.highlight">{{::artifact.text}}</span>
+          </div>
+          <!-- Versions subtree visibility -->
+          <div style="margin-left:28px" ng-if="artifact.expanded">
+
+            <!-- Versions list -->
+            <div ng-repeat="version in artifact.subnode">
+              <div class="indexItem" ng-disabled="true" >
+                {{::version.text}}
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.8/angular.min.js"></script>
+  <script src="js/gmaven-index.js"></script>
+
+</body>
