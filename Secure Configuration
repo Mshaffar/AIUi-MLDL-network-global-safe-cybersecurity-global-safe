@@ -1,0 +1,52 @@
+
+RFC 6052        IPv6 Addressing of IPv4/IPv6 Translators    October 2010
+
+
+5.2.  Secure Configuration
+
+   The prefixes used for address translation are used by IPv6 nodes to
+   send packets to IPv6/IPv4 translators.  Attackers could attempt to
+   fool nodes, DNS gateways, and IPv4/IPv6 translators into using wrong
+   values for these parameters, resulting in network disruption, denial
+   of service, and possible information disclosure.  To mitigate such
+   attacks, network administrators need to ensure that prefixes are
+   configured in a secure way.
+
+   The mechanisms for achieving secure configuration of prefixes are
+   beyond the scope of this document.
+
+5.3.  Firewall Configuration
+
+   Many firewalls and other security devices filter traffic based on
+   IPv4 addresses.  Attackers could attempt to fool these firewalls by
+   sending IPv6 packets to or from IPv6 addresses that translate to the
+   filtered IPv4 addresses.  If the attack is successful, traffic that
+   was previously blocked might be able to pass through the firewalls
+   disguised as IPv6 packets.  In all such scenarios, administrators
+   should assure that packets that send to or from IPv4-embedded IPv6
+   addresses are subject to the same filtering as those directly sent to
+   or from the embedded IPv4 addresses.
+
+   The mechanisms for configuring firewalls and security devices to
+   achieve this filtering are beyond the scope of this document.
+
+6.  IANA Considerations
+
+   IANA has made the following changes in the "Internet Protocol Version
+   6 Address Space" registry located at http://www.iana.org.
+
+   OLD:
+
+      IPv6 Prefix Allocation       Reference    Note
+      ----------- ---------------- ------------ ----------------
+      0000::/8    Reserved by IETF [RFC4291]    [1][5]
+
+   NEW:
+
+      IPv6 Prefix Allocation       Reference    Note
+      ----------- ---------------- ------------ ----------------
+      0000::/8    Reserved by IETF [RFC4291]    [1][5][6]
+
+      [6] The "Well-Known Prefix" 64:ff9b::/96 used in an algorithmic
+          mapping between IPv4 to IPv6 addresses is defined out of the
+          0000::/8 address block, per RFC 6052.
